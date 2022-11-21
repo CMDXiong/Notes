@@ -54,4 +54,55 @@ V(semaphore s)
 }
 ```
 
-用信号量解决进程同步问题
+用信号量解决进程同步问题(生产者-消费者问题)
+进程合作：多进程共同完成一个任务
+```C
+// 共享数据
+# define BUFFER_SIZE 10
+typedef struct{...} item;
+item buffer[BUFFER_SIZE];
+int in = out = counter =0;
+```
+
+```C
+// 生产者进程
+while(true) {
+  while(counter == BUFFER_SIZE) ; // 缓存区满，生产者要停
+  buffer[in] = item;
+  in = (in+1) % BUFFER_SIZE;
+  counter++;    // 发信号让消费者再走
+}
+```
+```C
+while(true){
+  while(counter == 0) ;  // 缓存区空，消费者要停
+  item = buffer[out];
+  out = (out+1) % BUFFER_SIZE;
+  counter--;  // 发信号让生产者再走
+}
+```
+用;来做无限while循环，但是会耗尽cpu，如下解决
+```C
+// 生产者进程
+while(true) {
+  while(counter == BUFFER_SIZE) 
+  sleep();  // 缓存区满，生产者要停
+  ...
+  counter = counter + 1;    
+  if (counter == 1) wakeup(消费者); // 发信号让消费者再走
+}
+```
+```C
+while(true){
+  while(counter == 0)
+  sleep(); // 缓存区空，消费者要停
+  ...
+  counter = counter + 1;  
+  if(counter == BUFFER_SIZE-1) wakeup(生产者);  // 发信号让生产者再走
+}
+```
+只发信号还不能解决全部问题：比如有多个生产者P1, P2，当缓冲区满后，生产者P1, P2都会sleep,消费者C执行1次循环，发信号给P1,P1被唤醒，当消费者C再执行1次循环，counter == BUFFER_SIZE-1不再成立，P2就不能被唤醒
+
+信号量解决以上问题
+
+<img width="808" alt="image" src="https://user-images.githubusercontent.com/29672091/202977564-fc424579-9b96-49c2-a7c2-e1cbbb278281.png">
