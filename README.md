@@ -138,3 +138,12 @@ flag[1] = false;
   如果P1不在临界区，则flag[1]=false或者turn=0, 此时P0都能进入！
 - 满足有限等待：
   P0要求进入，flag[0]=true, 后面的P1不可能一直进入，因为P1执行一次就会让turn=0
+
+```C
+flag[i] = true;  // 进入区
+turn = j;  // 进入区
+while(flag[j] && turn ==j) ;  // 进入区
+  临界区
+flag[i] = false;  // 退出区
+  剩余区
+```
