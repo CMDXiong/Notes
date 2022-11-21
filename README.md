@@ -106,3 +106,27 @@ while(true){
 信号量解决以上问题
 
 <img width="808" alt="image" src="https://user-images.githubusercontent.com/29672091/202977564-fc424579-9b96-49c2-a7c2-e1cbbb278281.png">
+
+#### 对信号量的临界区保护
+1. 1
+2. 2
+3. 进入临界区Peterson算法
+结合了标记和轮转两种思想
+// P0 进程
+```C
+flag[0] = true;
+turn = 1;
+while(flag[1] && turn == 1) ;
+  临界区
+flag[0] = false;
+  剩余区
+```
+// P1 进程
+```C
+flag[1] = true;
+turn = 0;
+while(flag[0] && turn == 0) ;
+  临界区
+flag[1] = false;
+  剩余区
+```
